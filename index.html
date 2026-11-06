@@ -96,6 +96,8 @@ button{font:inherit;color:inherit}
 .vp-title{font-family:var(--font-display);font-style:italic;font-size:26px;line-height:1.1;margin:0}
 .vp-text{font-size:14px;line-height:1.45;margin:0;max-width:34ch;color:#cfcac2}
 .vp-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:4px}
+.tap-play{position:absolute;inset:0;width:100%;border:0;background:rgba(10,9,11,.72);color:#f4f2ed;font:500 17px var(--font-ui);cursor:pointer}
+a.btn{display:inline-block;text-decoration:none;text-align:center}
 .countdown{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--font-display);font-style:italic;font-size:clamp(96px,30vw,170px);color:#fff;text-shadow:0 4px 30px rgba(0,0,0,.55);pointer-events:none}
 .countdown span{animation:pop .9s ease-out both}
 @keyframes pop{from{transform:scale(1.35);opacity:0}25%{opacity:1}to{transform:scale(.92);opacity:.85}}
@@ -262,10 +264,13 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:4px 0;width:100%}
         <p class="vp-text" id="vpText">Si tu navegador pregunta, dale permiso a la cámara.</p>
         <div class="vp-actions" id="vpActions" hidden>
           <button class="btn btn-cherry btn-sm" type="button" data-act="upload">Subir fotos</button>
-          <button class="btn btn-outline-light btn-sm" type="button" data-act="sample">Fotos de ejemplo</button>
+          <button class="btn btn-outline-light btn-sm" type="button" data-act="sample" id="vpSample">Fotos de ejemplo</button>
           <button class="btn btn-outline-light btn-sm" type="button" data-act="retry-cam" id="retryCam" hidden>Intentar de nuevo</button>
+          <button class="btn btn-light btn-sm" type="button" data-act="copy-link" id="copyLink" hidden>Copiar link</button>
+          <a class="btn btn-light btn-sm" id="openChrome" hidden>Abrir en Chrome</a>
         </div>
       </div>
+      <button class="tap-play" id="tapPlay" type="button" data-act="tap-play" hidden>Toca para ver la cámara</button>
       <div class="countdown" id="countdown" hidden></div>
       <div class="pose-tag" id="poseTag" hidden></div>
     </div>
@@ -402,6 +407,10 @@ const store = {
   set(k, v) { try { localStorage.setItem('vtg:' + k, JSON.stringify(v)); } catch (e) { /* sin almacenamiento */ } },
 };
 const inFrame = (() => { try { return window.self !== window.top; } catch (e) { return true; } })();
+const UA = navigator.userAgent || '';
+const IN_APP = (UA.match(/Instagram|FBAN|FBAV|FB_IAB|TikTok|musical_ly|BytedanceWebview|Snapchat|Pinterest|LinkedInApp|Line\//i) || [''])[0];
+const IN_APP_NAME = !IN_APP ? '' : /insta/i.test(IN_APP) ? 'Instagram' : /FB/i.test(IN_APP) ? 'Facebook' : /tiktok|musical|byte/i.test(IN_APP) ? 'TikTok' : /snap/i.test(IN_APP) ? 'Snapchat' : /pinterest/i.test(IN_APP) ? 'Pinterest' : /linkedin/i.test(IN_APP) ? 'LinkedIn' : 'esta app';
+const IS_ANDROID = /Android/i.test(UA);
 function dateStr() { const d = new Date(); return `${pad2(d.getDate())} · ${pad2(d.getMonth() + 1)} · ${d.getFullYear()}`; }
 function fileStamp() { const d = new Date(); return `${d.getFullYear()}${pad2(d.getMonth() + 1)}${pad2(d.getDate())}-${pad2(d.getHours())}${pad2(d.getMinutes())}`; }
 let toastT = 0;
@@ -1203,24 +1212,44 @@ function undo() {
 const video = $('#video');
 let stream = null, camOk = false, shooting = false, shotToken = 0, AC = null;
 function camMsg(kind) {
-  const title = $('#vpTitle'), text = $('#vpText'); $('#vpMsg').hidden = false; $('#vpActions').hidden = kind === 'loading'; $('#retryCam').hidden = inFrame || kind === 'loading';
-  if (kind === 'loading') { title.textContent = 'Encendiendo la cámara…'; text.textContent = 'Si tu navegador pregunta, dale permiso a la cámara.'; }
+  const title = $('#vpTitle'), text = $('#vpText'); $('#vpMsg').hidden = false; $('#tapPlay').hidden = true; $('#vpActions').hidden = kind === 'loading'; $('#retryCam').hidden = inFrame || kind === 'loading' || kind === 'inapp';
+  $('#copyLink').hidden = kind !== 'inapp'; $('#vpSample').hidden = kind === 'inapp'; $('#openChrome').hidden = !(kind === 'inapp' && IS_ANDROID);
+  if (kind === 'inapp') { $('#openChrome').href = `intent://${location.host}${location.pathname}#Intent;scheme=https;package=com.android.chrome;end`; }
+  if (kind === 'inapp') { title.textContent = `Ábrela en ${IS_ANDROID ? 'Chrome' : 'Safari'}`; text.textContent = `El navegador de ${IN_APP_NAME} no deja usar la cámara. Toca el menú de arriba (los tres puntos) y elige «Abrir en el navegador», o copia el link y pégalo en ${IS_ANDROID ? 'Chrome' : 'Safari'}.`; }
+  else if (kind === 'loading') { title.textContent = 'Encendiendo la cámara…'; text.textContent = 'Si tu navegador pregunta, dale permiso a la cámara.'; }
   else if (kind === 'denied' && !inFrame) { title.textContent = 'Falta el permiso de cámara'; text.textContent = 'Toca «Intentar de nuevo» y elige Permitir. Si no aparece la pregunta, actívala en los ajustes del navegador (en iPhone: aA › Ajustes del sitio web › Cámara).'; }
   else if (inFrame) { title.textContent = 'Aquí no hay cámara'; text.innerHTML = 'Para tomarte fotos, ábrela en <a href="https://gabymerce97-maker.github.io/vintage-to-go/" target="_blank" rel="noopener" style="color:inherit">gabymerce97-maker.github.io/vintage-to-go</a>. Aquí puedes subir de 1 a 6 fotos o usar las de ejemplo.'; }
   else { title.textContent = 'No encontramos una cámara'; text.textContent = 'Revisa que ninguna otra app la esté usando. También puedes subir de 1 a 6 fotos.'; }
 }
-async function startCamera() {
-  if (stream) return true;
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { camMsg('none'); return false; }
-  camMsg('loading');
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 960 } }, audio: false });
-    if ($('#scr-booth').hidden) { stopCamera(); return false; }
-    video.srcObject = stream; await video.play().catch(() => {});
-    camOk = true; $('#vpMsg').hidden = true; return true;
-  } catch (err) { camOk = false; stream = null; camMsg(err && (err.name === 'NotAllowedError' || err.name === 'SecurityError') ? 'denied' : 'none'); return false; }
+function playVideo() {
+  let p; try { p = video.play(); } catch (e) { p = null; }
+  if (p && p.then) p.then(() => { $('#tapPlay').hidden = true; }, () => { setTimeout(() => { if (camOk && video.paused) $('#tapPlay').hidden = false; }, 250); });
 }
-function stopCamera() { if (stream) stream.getTracks().forEach(t => t.stop()); stream = null; camOk = false; video.srcObject = null; }
+video.addEventListener('playing', () => { $('#tapPlay').hidden = true; });
+let camStarting = null;
+function startCamera() { if (!camStarting) camStarting = openCamera().finally(() => { camStarting = null; }); return camStarting; }
+async function openCamera() {
+  if (stream) { playVideo(); return true; }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { camMsg(IN_APP ? 'inapp' : 'none'); return false; }
+  camMsg('loading');
+  const tries = [
+    { video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 960 } }, audio: false },
+    { video: { facingMode: 'user' }, audio: false },
+    { video: true, audio: false },
+  ];
+  let lastErr = null;
+  for (const c of tries) {
+    try { stream = await navigator.mediaDevices.getUserMedia(c); break; }
+    catch (err) { lastErr = err; if (err && (err.name === 'NotAllowedError' || err.name === 'SecurityError')) break; }
+  }
+  if (!stream) {
+    camOk = false; const denied = lastErr && (lastErr.name === 'NotAllowedError' || lastErr.name === 'SecurityError');
+    camMsg(IN_APP ? 'inapp' : denied ? 'denied' : 'none'); return false;
+  }
+  if ($('#scr-booth').hidden) { stopCamera(); return false; }
+  video.srcObject = stream; camOk = true; $('#vpMsg').hidden = true; playVideo(); return true;
+}
+function stopCamera() { if (stream) stream.getTracks().forEach(t => t.stop()); stream = null; camOk = false; video.srcObject = null; $('#tapPlay').hidden = true; }
 function ensureAudio() { if (!B.sound) return; try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === 'suspended') AC.resume(); } catch (e) { AC = null; } }
 function beep(f) {
   if (!AC || !B.sound) return; const t = AC.currentTime, o = AC.createOscillator(), g = AC.createGain();
@@ -1266,7 +1295,8 @@ function setShooting(on) {
 async function shoot() {
   if (shooting) return;
   ensureAudio();
-  if (!camOk) { const ok = await startCamera(); if (!ok) { $('#fileIn').click(); return; } }
+  if (camOk && video.paused) playVideo();
+  if (!camOk) { const ok = await startCamera(); if (!ok) { if (!IN_APP) $('#fileIn').click(); return; } }
   const token = ++shotToken, n = B.poses, shots = [], cd = $('#countdown'), tag = $('#poseTag'), fl = $('#flash');
   setShooting(true); renderSlots(shots);
   for (let i = 0; i < n; i++) {
@@ -1540,7 +1570,13 @@ function addText() {
    ========================================================= */
 const ACT = {
   upload() { $('#fileIn').click(); },
-  'retry-cam'() { stream = null; startCamera(); },
+  'retry-cam'() { stopCamera(); startCamera(); },
+  'tap-play'() { playVideo(); },
+  async 'copy-link'(b) {
+    const url = location.href.split('#')[0];
+    try { await navigator.clipboard.writeText(url); b.textContent = '¡Copiado!'; setTimeout(() => { b.textContent = 'Copiar link'; }, 2000); }
+    catch (e) { $('#vpText').textContent = url; toast('Mantén presionado el link para copiarlo.'); }
+  },
   sample() { startDevelop(samplePhotos(B.poses)); },
   'cancel-shoot'() { shotToken++; setShooting(false); renderSlots([]); },
   boothopt(b) { const k = b.dataset.k, vals = BOOTH[k].vals; B[k] = vals[(vals.indexOf(B[k]) + 1) % vals.length]; store.set(k, B[k]); renderBoothOpts(); },
