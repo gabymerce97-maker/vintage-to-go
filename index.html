@@ -1206,7 +1206,7 @@ function camMsg(kind) {
   const title = $('#vpTitle'), text = $('#vpText'); $('#vpMsg').hidden = false; $('#vpActions').hidden = kind === 'loading'; $('#retryCam').hidden = inFrame || kind === 'loading';
   if (kind === 'loading') { title.textContent = 'Encendiendo la cámara…'; text.textContent = 'Si tu navegador pregunta, dale permiso a la cámara.'; }
   else if (kind === 'denied' && !inFrame) { title.textContent = 'Falta el permiso de cámara'; text.textContent = 'Toca «Intentar de nuevo» y elige Permitir. Si no aparece la pregunta, actívala en los ajustes del navegador (en iPhone: aA › Ajustes del sitio web › Cámara).'; }
-  else if (inFrame) { title.textContent = 'Aquí no hay cámara'; text.textContent = 'Esta vista no deja usar la cámara. Sube de 1 a 6 fotos de tu galería o prueba con las de ejemplo.'; }
+  else if (inFrame) { title.textContent = 'Aquí no hay cámara'; text.innerHTML = 'Para tomarte fotos, ábrela en <a href="https://gabymerce97-maker.github.io/vintage-to-go/" target="_blank" rel="noopener" style="color:inherit">gabymerce97-maker.github.io/vintage-to-go</a>. Aquí puedes subir de 1 a 6 fotos o usar las de ejemplo.'; }
   else { title.textContent = 'No encontramos una cámara'; text.textContent = 'Revisa que ninguna otra app la esté usando. También puedes subir de 1 a 6 fotos.'; }
 }
 async function startCamera() {
