@@ -1,14 +1,14 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <!--@artifact-->
 <title>Vintage to Go</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Fotocabina vintage gratis: cuatro poses, una tira, 47 filtros, marcos y stickers. Funciona en el celular.">
+<meta name="description" content="A free vintage photo booth: four poses, one strip, 47 filters, frames and stickers. Works on your phone.">
 <meta property="og:title" content="Vintage to Go">
-<meta property="og:description" content="Fotocabina vintage gratis: cuatro poses, una tira, 47 filtros, marcos y stickers.">
+<meta property="og:description" content="A free vintage photo booth: four poses, one strip, 47 filters, frames and stickers.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://gabymerce97-maker.github.io/vintage-to-go/og.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -124,6 +124,12 @@ a.btn{display:inline-block;text-decoration:none;text-align:center}
 .plate{font-family:var(--font-type);font-size:12px;line-height:1.8;letter-spacing:.26em;text-transform:uppercase;text-align:center;
   background:linear-gradient(#d3d1cc,#b8b6b0);color:#2a2927;padding:12px 26px 8px;border-radius:6px;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.65), inset 0 -1px 0 rgba(0,0,0,.12), 0 2px 5px rgba(0,0,0,.22)}
+.plate{width:min(100%,330px)}
+.plate-text{display:flex;align-items:center;justify-content:center;min-height:3.6em;text-wrap:balance}
+.plate-arrow{display:block}
+.cheer{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:#f7f6f2;color:#2b2927;font-family:var(--font-type);font-size:13px;letter-spacing:.14em;text-transform:uppercase;padding:7px 14px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.3);white-space:nowrap;pointer-events:none}
+.cheer.on{animation:cheer 1.1s ease both}
+@keyframes cheer{0%{opacity:0;transform:translate(-50%,8px) scale(.9)}15%{opacity:1;transform:translate(-50%,0) scale(1)}80%{opacity:1}100%{opacity:0}}
 .tray{background:linear-gradient(160deg,var(--chrome-hi),var(--chrome-lo));padding:14px;border-radius:28px;box-shadow:inset 0 1px 0 rgba(255,255,255,.6), var(--lift);max-width:100%}
 .tray-in{position:relative;background:var(--slot);border-radius:18px;padding:22px 64px 30px;height:min(64svh,660px);min-height:340px;display:flex;justify-content:center;overflow:hidden;box-shadow:inset 0 12px 20px rgba(0,0,0,.75)}
 .tray-in::before{content:"";position:absolute;left:0;right:0;top:0;height:26px;background:linear-gradient(#000,rgba(0,0,0,0));z-index:2;pointer-events:none}
@@ -242,6 +248,7 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:4px 0;width:100%}
   .strip-out img{transition:none}
   .star-btn.busy svg{animation:none}
   .countdown span{animation:none}
+  .cheer.on{animation:none}
 }
 </style>
 </head>
@@ -252,136 +259,137 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:4px 0;width:100%}
 <main id="scr-booth" class="screen booth-screen">
   <header class="brand">
     <h1 class="logo">vintage to go</h1>
-    <p class="tag">fotocabina vintage · gratis</p>
+    <p class="tag">vintage photo booth · free</p>
   </header>
 
-  <section class="booth" aria-label="Cabina de fotos">
-    <div class="lens-label" aria-hidden="true"><span>mira aquí</span><i class="lens"></i><span>sonríe</span></div>
+  <section class="booth" aria-label="Photo booth">
+    <div class="lens-label" aria-hidden="true"><span>look here</span><i class="lens"></i><span>smile</span></div>
     <div class="viewport" id="vp">
       <video id="video" class="mirror" playsinline muted autoplay></video>
       <div class="vp-msg" id="vpMsg">
-        <p class="vp-title" id="vpTitle">Encendiendo la cámara…</p>
-        <p class="vp-text" id="vpText">Si tu navegador pregunta, dale permiso a la cámara.</p>
+        <p class="vp-title" id="vpTitle">Starting the camera…</p>
+        <p class="vp-text" id="vpText">If your browser asks, allow camera access.</p>
         <div class="vp-actions" id="vpActions" hidden>
-          <button class="btn btn-cherry btn-sm" type="button" data-act="upload">Subir fotos</button>
-          <button class="btn btn-outline-light btn-sm" type="button" data-act="sample" id="vpSample">Fotos de ejemplo</button>
-          <button class="btn btn-outline-light btn-sm" type="button" data-act="retry-cam" id="retryCam" hidden>Intentar de nuevo</button>
-          <button class="btn btn-light btn-sm" type="button" data-act="copy-link" id="copyLink" hidden>Copiar link</button>
-          <a class="btn btn-light btn-sm" id="openChrome" hidden>Abrir en Chrome</a>
+          <button class="btn btn-cherry btn-sm" type="button" data-act="upload">Upload photos</button>
+          <button class="btn btn-outline-light btn-sm" type="button" data-act="sample" id="vpSample">Sample photos</button>
+          <button class="btn btn-outline-light btn-sm" type="button" data-act="retry-cam" id="retryCam" hidden>Try again</button>
+          <button class="btn btn-light btn-sm" type="button" data-act="copy-link" id="copyLink" hidden>Copy link</button>
+          <a class="btn btn-light btn-sm" id="openChrome" hidden>Open in Chrome</a>
         </div>
       </div>
-      <button class="tap-play" id="tapPlay" type="button" data-act="tap-play" hidden>Toca para ver la cámara</button>
+      <button class="tap-play" id="tapPlay" type="button" data-act="tap-play" hidden>Tap to see the camera</button>
       <div class="countdown" id="countdown" hidden></div>
       <div class="pose-tag" id="poseTag" hidden></div>
+      <div class="cheer" id="cheer" hidden></div>
     </div>
-    <p class="booth-hint" id="boothHint">cuatro poses, una tira</p>
+    <p class="booth-hint" id="boothHint">four poses, one strip</p>
     <div class="slots" id="slots"></div>
     <div class="booth-foot">
       <button class="star-btn" id="starBtn" type="button">
         <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 6 L61.76 35.82 L93.75 37.79 L69.02 58.18 L77.04 89.21 L50 72 L22.96 89.21 L30.98 58.18 L6.25 37.79 L38.24 35.82Z" fill="#f2cf4a" stroke="#b9940f" stroke-width="4" stroke-linejoin="round"/></svg>
-        <span id="starLabel">toca para empezar</span>
+        <span id="starLabel">tap to start</span>
       </button>
-      <button class="link small" id="cancelShoot" type="button" data-act="cancel-shoot" hidden>cancelar</button>
+      <button class="link small" id="cancelShoot" type="button" data-act="cancel-shoot" hidden>cancel</button>
     </div>
-    <div class="booth-opts" id="boothOpts" role="group" aria-label="Ajustes de la cabina"></div>
+    <div class="booth-opts" id="boothOpts" role="group" aria-label="Booth settings"></div>
   </section>
 
-  <nav class="booth-links" aria-label="Otras formas de empezar">
-    <button class="link" type="button" data-act="sample">← fotos de ejemplo</button>
-    <button class="link" type="button" data-act="upload">subir fotos →</button>
+  <nav class="booth-links" aria-label="Other ways to start">
+    <button class="link" type="button" data-act="sample">← sample photos</button>
+    <button class="link" type="button" data-act="upload">upload photos →</button>
   </nav>
   <input type="file" id="fileIn" accept="image/*" multiple hidden>
 </main>
 
 <!-- ============ 2 · REVELADO ============ -->
 <main id="scr-develop" class="screen develop" hidden>
-  <div class="plate" aria-hidden="true">tus fotos salen aquí<br>en 1 segundo<br>↓</div>
+  <div class="plate" aria-hidden="true"><span class="plate-text" id="plateText">you look fab</span><span class="plate-arrow" aria-hidden="true">↓</span></div>
   <div class="tray">
     <div class="tray-in" id="trayIn">
-      <button class="strip-out" id="stripOut" type="button" aria-label="Ver la tira de cerca"><img id="stripImg" alt="Tu tira de fotos"></button>
+      <button class="strip-out" id="stripOut" type="button" aria-label="See the strip up close"><img id="stripImg" alt="Your photo strip"></button>
     </div>
   </div>
-  <p class="hint">toca la tira para verla de cerca</p>
+  <p class="hint">tap the strip to see it up close</p>
   <div class="row-btns">
-    <button class="btn btn-cherry" type="button" data-act="decorate">Decorar ✦</button>
-    <button class="btn btn-ink" type="button" data-act="download-strip">Descargar</button>
+    <button class="btn btn-cherry" type="button" data-act="decorate">Decorate ✦</button>
+    <button class="btn btn-ink" type="button" data-act="download-strip">Download</button>
   </div>
-  <button class="link" type="button" data-act="retake">repetir</button>
+  <button class="link" type="button" data-act="retake">retake</button>
 </main>
 
 <!-- ============ 3 · DECORAR ============ -->
 <main id="scr-decor" class="screen decor" hidden>
   <header class="decor-head">
     <div>
-      <h2 class="decor-title">toques finales !!</h2>
-      <p class="eyebrow">hazlo tuyo</p>
+      <h2 class="decor-title">final touches !!</h2>
+      <p class="eyebrow">make it yours</p>
     </div>
   </header>
   <div class="decor-grid">
     <div class="stage-col">
       <div class="toolbar">
-        <button class="btn btn-ghost btn-sm" type="button" data-act="back-develop">← tira</button>
+        <button class="btn btn-ghost btn-sm" type="button" data-act="back-develop">← strip</button>
         <div class="toolbar-r">
-          <button class="btn btn-ghost btn-sm" type="button" id="undoBtn" data-act="undo" disabled>↶ Deshacer</button>
-          <button class="btn btn-ghost btn-sm" type="button" id="shareBtn" data-act="share" hidden>Compartir</button>
-          <button class="btn btn-ink btn-sm" type="button" id="saveBtn" data-act="save">Guardar imagen</button>
+          <button class="btn btn-ghost btn-sm" type="button" id="undoBtn" data-act="undo" disabled>↶ Undo</button>
+          <button class="btn btn-ghost btn-sm" type="button" id="shareBtn" data-act="share" hidden>Share</button>
+          <button class="btn btn-ink btn-sm" type="button" id="saveBtn" data-act="save">Save image</button>
         </div>
       </div>
-      <div class="stage" id="stage"><canvas id="cv" tabindex="0" aria-label="Lienzo. Arrastra para mover; usa los puntos para escalar o girar."></canvas></div>
+      <div class="stage" id="stage"><canvas id="cv" tabindex="0" aria-label="Canvas. Drag to move; use the dots to resize or turn."></canvas></div>
       <div class="selbar" id="selbar">
-        <p class="stage-hint" id="stageHint">arrastra para mover · usa los puntos para escalar o girar</p>
+        <p class="stage-hint" id="stageHint">drag to move · use the dots to resize or turn</p>
         <div id="selTools" hidden style="display:contents">
           <span class="sel-label" id="selLabel"></span>
-          <button class="ibtn" type="button" data-act="sel-smaller" aria-label="Más pequeño">−</button>
-          <button class="ibtn" type="button" data-act="sel-bigger" aria-label="Más grande">+</button>
-          <button class="ibtn" type="button" data-act="sel-rotl" aria-label="Girar a la izquierda">↺</button>
-          <button class="ibtn" type="button" data-act="sel-rotr" aria-label="Girar a la derecha">↻</button>
-          <button class="ibtn" type="button" data-act="sel-front">Al frente</button>
-          <button class="ibtn danger" type="button" data-act="sel-delete">Quitar</button>
+          <button class="ibtn" type="button" data-act="sel-smaller" aria-label="Smaller">−</button>
+          <button class="ibtn" type="button" data-act="sel-bigger" aria-label="Bigger">+</button>
+          <button class="ibtn" type="button" data-act="sel-rotl" aria-label="Turn left">↺</button>
+          <button class="ibtn" type="button" data-act="sel-rotr" aria-label="Turn right">↻</button>
+          <button class="ibtn" type="button" data-act="sel-front">To front</button>
+          <button class="ibtn danger" type="button" data-act="sel-delete">Remove</button>
         </div>
       </div>
     </div>
 
     <div class="panel">
-      <section class="step"><h3><span class="n">01</span>Elige el lienzo</h3><div class="opts" id="optFormat"></div></section>
-      <section class="step"><h3><span class="n">02</span>Acomoda las fotos</h3><div class="opts" id="optLayout"></div>
-        <div class="row-links"><button class="link small" type="button" data-act="reshuffle">mezclar posiciones</button></div></section>
-      <section class="step"><h3><span class="n">03</span>Enmarca la tira</h3><div class="opts" id="optFrame"></div></section>
-      <section class="step"><h3><span class="n">04</span>Revela con un filtro<span class="count" id="fCount"></span></h3>
-        <div class="chips" id="fCats" role="group" aria-label="Familias de filtros"></div>
+      <section class="step"><h3><span class="n">01</span>Choose the canvas</h3><div class="opts" id="optFormat"></div></section>
+      <section class="step"><h3><span class="n">02</span>Arrange the photos</h3><div class="opts" id="optLayout"></div>
+        <div class="row-links"><button class="link small" type="button" data-act="reshuffle">shuffle positions</button></div></section>
+      <section class="step"><h3><span class="n">03</span>Frame the strip</h3><div class="opts" id="optFrame"></div></section>
+      <section class="step"><h3><span class="n">04</span>Tune the print<span class="count" id="fCount"></span></h3>
+        <div class="chips" id="fCats" role="group" aria-label="Filter families"></div>
         <div class="fgrid" id="fGrid"></div>
-        <div class="range-row"><label for="rInt">Intensidad</label><input type="range" id="rInt" min="0" max="100" step="1"><output id="oInt" for="rInt"></output></div>
-        <details class="fine"><summary>Ajustes finos</summary>
+        <div class="range-row"><label for="rInt">Intensity</label><input type="range" id="rInt" min="0" max="100" step="1"><output id="oInt" for="rInt"></output></div>
+        <details class="fine"><summary>Fine tuning</summary>
           <div class="adj-rows" id="adjRows"></div>
-          <button class="link small" type="button" data-act="reset-adj">restablecer ajustes</button>
+          <button class="link small" type="button" data-act="reset-adj">reset adjustments</button>
         </details>
       </section>
-      <section class="step"><h3><span class="n">05</span>Escoge el papel</h3><div class="swatches" id="papers"></div><p class="mini" id="paperName"></p>
+      <section class="step"><h3><span class="n">05</span>Pick some paper</h3><div class="swatches" id="papers"></div><p class="mini" id="paperName"></p>
         <input type="file" id="paperIn" accept="image/*" hidden></section>
-      <section class="step"><h3><span class="n">06</span>Ponle adornos</h3><div class="opts" id="optFinish"></div>
-        <p class="sub-h">o agrégalos uno por uno</p><div class="stickers" id="stickers"></div>
-        <div class="row-links"><button class="link small" type="button" data-act="reshuffle-stickers">mezclar adornos</button><button class="link small" type="button" data-act="clear-stickers">quitar todos</button></div></section>
-      <section class="step"><h3><span class="n">07</span>Escribe algo</h3>
-        <label class="field-l" for="capIn">Pie de la tira</label>
+      <section class="step"><h3><span class="n">06</span>Add some sparkle</h3><div class="opts" id="optFinish"></div>
+        <p class="sub-h">or add them one by one</p><div class="stickers" id="stickers"></div>
+        <div class="row-links"><button class="link small" type="button" data-act="reshuffle-stickers">shuffle extras</button><button class="link small" type="button" data-act="clear-stickers">remove all</button></div></section>
+      <section class="step"><h3><span class="n">07</span>Write something</h3>
+        <label class="field-l" for="capIn">Strip caption</label>
         <input class="text-in" type="text" id="capIn" maxlength="40" autocomplete="off">
-        <div class="chips" id="capFonts" role="group" aria-label="Letra del pie"></div>
-        <label class="check"><input type="checkbox" id="chkDate"> Fecha en el pie</label>
-        <label class="check"><input type="checkbox" id="chkStamp"> Sello de fecha naranja en cada foto</label>
+        <div class="chips" id="capFonts" role="group" aria-label="Caption font"></div>
+        <label class="check"><input type="checkbox" id="chkDate"> Date under the caption</label>
+        <label class="check"><input type="checkbox" id="chkStamp"> Orange date stamp on each photo</label>
         <hr class="sep">
-        <label class="field-l" for="txtIn">Texto libre</label>
-        <input class="text-in" type="text" id="txtIn" maxlength="60" placeholder="noche de chicas ♡" autocomplete="off">
-        <div class="chips" id="txtFonts" role="group" aria-label="Letra del texto"></div>
-        <div class="colors" id="txtColors" role="group" aria-label="Color del texto"></div>
-        <div><button class="btn btn-ink btn-sm" type="button" data-act="add-text">Agregar texto</button></div>
+        <label class="field-l" for="txtIn">Your own text</label>
+        <input class="text-in" type="text" id="txtIn" maxlength="60" placeholder="girls' night ♡" autocomplete="off">
+        <div class="chips" id="txtFonts" role="group" aria-label="Text font"></div>
+        <div class="colors" id="txtColors" role="group" aria-label="Text color"></div>
+        <div><button class="btn btn-ink btn-sm" type="button" data-act="add-text">Add text</button></div>
       </section>
     </div>
   </div>
 </main>
 
-<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Vista de cerca">
-  <img id="lbImg" alt="Vista de cerca">
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Close-up view">
+  <img id="lbImg" alt="Close-up view">
   <p id="lbNote" hidden></p>
-  <button class="btn btn-light btn-sm" type="button" data-act="lb-close">Cerrar</button>
+  <button class="btn btn-light btn-sm" type="button" data-act="lb-close">Close</button>
 </div>
 <div class="toast" id="toast" role="status" hidden></div>
 
@@ -409,9 +417,10 @@ const store = {
 const inFrame = (() => { try { return window.self !== window.top; } catch (e) { return true; } })();
 const UA = navigator.userAgent || '';
 const IN_APP = (UA.match(/Instagram|FBAN|FBAV|FB_IAB|TikTok|musical_ly|BytedanceWebview|Snapchat|Pinterest|LinkedInApp|Line\//i) || [''])[0];
-const IN_APP_NAME = !IN_APP ? '' : /insta/i.test(IN_APP) ? 'Instagram' : /FB/i.test(IN_APP) ? 'Facebook' : /tiktok|musical|byte/i.test(IN_APP) ? 'TikTok' : /snap/i.test(IN_APP) ? 'Snapchat' : /pinterest/i.test(IN_APP) ? 'Pinterest' : /linkedin/i.test(IN_APP) ? 'LinkedIn' : 'esta app';
+const IN_APP_NAME = !IN_APP ? '' : /insta/i.test(IN_APP) ? 'Instagram' : /FB/i.test(IN_APP) ? 'Facebook' : /tiktok|musical|byte/i.test(IN_APP) ? 'TikTok' : /snap/i.test(IN_APP) ? 'Snapchat' : /pinterest/i.test(IN_APP) ? 'Pinterest' : /linkedin/i.test(IN_APP) ? 'LinkedIn' : '';
 const IS_ANDROID = /Android/i.test(UA);
-function dateStr() { const d = new Date(); return `${pad2(d.getDate())} · ${pad2(d.getMonth() + 1)} · ${d.getFullYear()}`; }
+const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+function dateStr() { const d = new Date(); return `${MONTHS[d.getMonth()]} ${pad2(d.getDate())} · ${d.getFullYear()}`; }
 function fileStamp() { const d = new Date(); return `${d.getFullYear()}${pad2(d.getMonth() + 1)}${pad2(d.getDate())}-${pad2(d.getHours())}${pad2(d.getMinutes())}`; }
 let toastT = 0;
 function toast(msg, ms = 2600) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, ms); }
@@ -420,37 +429,37 @@ function toast(msg, ms = 2600) { const t = $('#toast'); t.textContent = msg; t.h
    datos: formatos, acomodos, marcos, letras
    ========================================================= */
 const FORMATS = {
-  portrait: { name: 'Retrato', sub: '1080 × 1350', w: 1080, h: 1350 },
-  story: { name: 'Historia', sub: '1080 × 1920', w: 1080, h: 1920 },
-  square: { name: 'Cuadrado', sub: '1080 × 1080', w: 1080, h: 1080 },
-  postcard: { name: 'Postal 4×6', sub: '1200 × 1800', w: 1200, h: 1800 },
-  landscape: { name: 'Horizontal', sub: '1920 × 1080', w: 1920, h: 1080 },
-  strip: { name: 'Solo la tira', sub: 'tamaño real, 2 × 6' },
+  portrait: { name: 'Portrait', sub: '1080 × 1350', w: 1080, h: 1350 },
+  story: { name: 'Story', sub: '1080 × 1920', w: 1080, h: 1920 },
+  square: { name: 'Square', sub: '1080 × 1080', w: 1080, h: 1080 },
+  postcard: { name: 'Postcard 4×6', sub: '1200 × 1800', w: 1200, h: 1800 },
+  landscape: { name: 'Landscape', sub: '1920 × 1080', w: 1920, h: 1080 },
+  strip: { name: 'Strip only', sub: 'actual size, 2 × 6' },
 };
 const LAYOUTS = {
-  strip: { name: 'Una tira', sub: 'clásica de cabina' },
-  double: { name: 'Doble tira', sub: 'como salen de la máquina' },
-  loose: { name: 'Fotos sueltas', sub: 'arrástralas a tu gusto' },
-  grid: { name: 'Cuadrícula', sub: 'todas en un cuadro' },
+  strip: { name: 'One strip', sub: 'classic booth' },
+  double: { name: 'Double strip', sub: 'just like the machine' },
+  loose: { name: 'Loose prints', sub: 'drag them anywhere' },
+  grid: { name: 'Grid', sub: 'all in one frame' },
 };
 const FRAMES = {
-  classic: { name: 'Clásico fino', sub: 'borde negro de cabina', bg: '#121112', tex: .18, pad: 24, gap: 20, cap: 84, ink: '#e6e2da' },
-  vintage: { name: 'Vintage grueso', sub: 'papel cálido', bg: '#ebe1cb', tex: .4, burn: .2, pad: 44, gap: 30, cap: 110, ink: '#4a3a2b' },
-  none: { name: 'Sin borde', sub: 'de orilla a orilla', bg: '#0d0d0d', pad: 0, gap: 4, cap: 0, ink: '#ffffff' },
-  instant: { name: 'Instantánea', sub: 'blanco, base ancha', bg: '#f7f5f0', tex: .3, pad: 30, gap: 26, cap: 130, ink: '#2b2a28' },
-  film: { name: 'Película 35 mm', sub: 'con perforaciones', bg: '#171513', tex: .15, pad: 22, side: 66, gap: 22, cap: 70, ink: '#eaa040', film: true },
-  cherry: { name: 'Cereza', sub: 'rojo laca', bg: '#9e1c22', tex: .25, pad: 26, gap: 22, cap: 90, ink: '#f9e7dd' },
-  blush: { name: 'Rosa chicle', sub: 'pastel suave', bg: '#f1c5cf', tex: .3, pad: 28, gap: 24, cap: 96, ink: '#7b2b43' },
+  classic: { name: 'Classic thin', sub: 'dark booth edge', bg: '#121112', tex: .18, pad: 24, gap: 20, cap: 84, ink: '#e6e2da' },
+  vintage: { name: 'Thick vintage', sub: 'warm paper frame', bg: '#ebe1cb', tex: .4, burn: .2, pad: 44, gap: 30, cap: 110, ink: '#4a3a2b' },
+  none: { name: 'No border', sub: 'edge to edge', bg: '#0d0d0d', pad: 0, gap: 4, cap: 0, ink: '#ffffff' },
+  instant: { name: 'Instant', sub: 'white, wide bottom', bg: '#f7f5f0', tex: .3, pad: 30, gap: 26, cap: 130, ink: '#2b2a28' },
+  film: { name: '35mm film', sub: 'with sprocket holes', bg: '#171513', tex: .15, pad: 22, side: 66, gap: 22, cap: 70, ink: '#eaa040', film: true },
+  cherry: { name: 'Cherry', sub: 'lacquer red', bg: '#9e1c22', tex: .25, pad: 26, gap: 22, cap: 90, ink: '#f9e7dd' },
+  blush: { name: 'Bubblegum', sub: 'soft pastel', bg: '#f1c5cf', tex: .3, pad: 28, gap: 24, cap: 96, ink: '#7b2b43' },
 };
 const FONTS = {
-  maquina: { label: 'Máquina', css: '"Special Elite"', fb: '"Courier New", monospace', sp: .16, sc: 1 },
-  caligrafia: { label: 'Caligrafía', css: '"Pinyon Script"', fb: 'cursive', sp: 0, sc: 1.55 },
-  mano: { label: 'A mano', css: '"Caveat"', fb: 'cursive', w: 700, sp: 0, sc: 1.45 },
-  revista: { label: 'Revista', css: '"Instrument Serif"', fb: 'Georgia, serif', st: 'italic', sp: 0, sc: 1.4 },
-  burbuja: { label: 'Burbuja', css: '"Bagel Fat One"', fb: 'sans-serif', sp: .03, sc: 1.05 },
+  maquina: { label: 'Typewriter', css: '"Special Elite"', fb: '"Courier New", monospace', sp: .16, sc: 1 },
+  caligrafia: { label: 'Script', css: '"Pinyon Script"', fb: 'cursive', sp: 0, sc: 1.55 },
+  mano: { label: 'Handwritten', css: '"Caveat"', fb: 'cursive', w: 700, sp: 0, sc: 1.45 },
+  revista: { label: 'Magazine', css: '"Instrument Serif"', fb: 'Georgia, serif', st: 'italic', sp: 0, sc: 1.4 },
+  burbuja: { label: 'Bubble', css: '"Bagel Fat One"', fb: 'sans-serif', sp: .03, sc: 1.05 },
 };
 const fontStr = (f, px) => `${f.st || 'normal'} ${f.w || 400} ${px}px ${f.css}, ${f.fb}`;
-const TEXT_COLORS = [['#1b191d', 'tinta'], ['#ffffff', 'blanco'], ['#b3261e', 'cereza'], ['#c9a227', 'dorado'], ['#e98aa8', 'rosa'], ['#2f5fa8', 'azul']];
+const TEXT_COLORS = [['#1b191d', 'ink'], ['#ffffff', 'white'], ['#b3261e', 'cherry'], ['#c9a227', 'gold'], ['#e98aa8', 'pink'], ['#2f5fa8', 'blue']];
 const fontsReady = Promise.race([
   Promise.all(Object.values(FONTS).map(f => document.fonts ? document.fonts.load(fontStr(f, 40)).catch(() => null) : null)),
   wait(2500),
@@ -461,58 +470,58 @@ const fontsReady = Promise.race([
    ========================================================= */
 const C = (r, g, b) => [r, g, b];
 const FILTER_DEFS = [
-  ['clasico', 'Clásico B&N', 'la película de cabina', 'bn', { bw: 1, contrast: .22, curve: .25, fade: .06, grain: .22, vignette: .3 }],
-  ['bn-flash', 'B&N con flash', 'cara brillante, fondo oscuro', 'bn', { bw: 1, contrast: .3, flash: .7, vignette: .55, grain: .2 }],
-  ['bn-frio', 'B&N frío', 'plata azulada', 'bn', { bw: 1, contrast: .2, sh: C(30, 45, 80), shAmt: .4, hi: C(225, 235, 250), hiAmt: .2, grain: .15 }],
-  ['selenio', 'Selenio', 'gris cálido de laboratorio', 'bn', { bw: 1, contrast: .18, sh: C(75, 45, 40), shAmt: .4, hi: C(250, 236, 215), hiAmt: .25, grain: .18 }],
-  ['noir', 'Noir', 'contraste duro', 'bn', { bw: 1, contrast: .55, curve: .45, exposure: -.12, vignette: .65, grain: .3 }],
-  ['plata', 'Plata suave', 'grises lavados', 'bn', { bw: 1, contrast: -.12, fade: .55, exposure: .05, grain: .18 }],
-  ['carbon', 'Carbón', 'negros profundos', 'bn', { bw: 1, contrast: .4, exposure: -.25, curve: .3, grain: .25 }],
-  ['infrarrojo', 'Infrarrojo', 'piel de porcelana', 'bn', { bw: 1, bwMix: [.85, .55, -.4], glow: .45, contrast: .25, exposure: .08 }],
-  ['sepia', 'Sepia 1920', 'retrato de la abuela', 'bn', { bw: 1, grad: ['#2b1a0e', '#9a7148', '#f1dfba'], gradAmt: .95, fade: .2, vignette: .55, grain: .35, dust: .5 }],
-  ['daguerro', 'Daguerrotipo', 'placa de metal', 'bn', { bw: 1, grad: ['#141613', '#7a7a70', '#d9d6c6'], gradAmt: .9, glow: .3, vignette: .85, dust: .7, contrast: .2 }],
-  ['cianotipo', 'Cianotipo', 'azul de plano', 'bn', { bw: 1, grad: ['#0b2a5c', '#2f6aa3', '#e4eef5'], gradAmt: 1, fade: .1, dust: .3 }],
-  ['periodico', 'Periódico', 'tinta sobre papel', 'bn', { bw: 1, contrast: .5, poster: 5, grad: ['#232323', '#ece5d4'], gradAmt: .9, grain: .5 }],
-  ['flash-vintage', 'Flash vintage', 'luz directa de fiesta', 'flash', { flash: .8, vignette: .6, temp: .2, contrast: .25, sat: .9, grain: .2 }],
-  ['flash-calido', 'Flash cálido', 'brillo durazno', 'flash', { temp: .5, flash: .6, hi: C(255, 205, 175), hiAmt: .25, sat: 1.1, vignette: .4 }],
-  ['flash-rosa', 'Flash rosa', 'rubor de fiesta', 'flash', { hi: C(255, 175, 205), hiAmt: .3, sh: C(90, 20, 60), shAmt: .3, flash: .55, vignette: .4 }],
-  ['cuarto-rojo', 'Cuarto rojo', 'luz de revelado', 'flash', { bw: 1, grad: ['#1a0000', '#a3121c', '#ffb39e'], gradAmt: .9, contrast: .3, vignette: .6 }],
-  ['flash-verde', 'Flash verde', 'menta eléctrica', 'flash', { sh: C(0, 70, 45), shAmt: .45, hi: C(215, 255, 205), hiAmt: .2, flash: .5, contrast: .2, vignette: .4 }],
-  ['cuarto-azul', 'Cuarto azul', 'sombras frías', 'flash', { temp: -.5, sh: C(10, 30, 90), shAmt: .4, flash: .45, vignette: .5 }],
-  ['disco', 'Disco', 'magenta y cian', 'flash', { sh: C(90, 0, 130), shAmt: .4, hi: C(140, 255, 255), hiAmt: .22, sat: 1.3, contrast: .3, flash: .4 }],
-  ['paparazzi', 'Paparazzi', 'flash de alfombra roja', 'flash', { exposure: .12, flash: 1, vignette: .9, contrast: .45, sat: .85 }],
-  ['natural', 'Natural', 'sin filtro', 'color', {}],
-  ['sonado', 'Color soñado', 'suave y luminoso', 'color', { glow: .5, fade: .3, sat: .9, temp: .15, contrast: -.1 }],
-  ['caramelo', 'Caramelo', 'color pop juguetón', 'color', { sat: 1.45, contrast: .2, hi: C(255, 232, 240), hiAmt: .12 }],
-  ['hora-dorada', 'Hora dorada', 'luz ámbar de atardecer', 'color', { temp: .7, hi: C(255, 200, 120), hiAmt: .25, sat: 1.1, glow: .2 }],
-  ['lavanda', 'Neblina lavanda', 'lila suave', 'color', { sh: C(80, 60, 125), shAmt: .35, hi: C(236, 222, 255), hiAmt: .2, fade: .35, sat: .8 }],
-  ['durazno', 'Durazno', 'piel melocotón', 'color', { temp: .35, hi: C(255, 215, 190), hiAmt: .25, fade: .2 }],
-  ['menta', 'Menta', 'verde fresco', 'color', { sh: C(20, 75, 60), shAmt: .35, hi: C(232, 255, 242), hiAmt: .15, sat: .85 }],
-  ['pop', 'Pop', 'saturado y contrastado', 'color', { sat: 1.8, contrast: .45 }],
-  ['expirada', 'Película expirada', 'colores raros', 'color', { sh: C(60, 0, 95), shAmt: .35, hi: C(255, 240, 150), hiAmt: .3, fade: .3, grain: .45, sat: .8, leak: .6 }],
-  ['cruzado', 'Proceso cruzado', 'amarillo y cian', 'color', { sh: C(0, 45, 90), shAmt: .4, hi: C(255, 248, 150), hiAmt: .35, contrast: .3, sat: 1.2 }],
-  ['setentas', 'Verano 70s', 'cálido y deslavado', 'color', { temp: .5, fade: .4, sat: .8, hi: C(255, 220, 160), hiAmt: .2, grain: .3, leak: .45 }],
-  ['instantanea', 'Instantánea', 'cian en las sombras', 'color', { sh: C(0, 65, 75), shAmt: .35, fade: .3, temp: .1, hi: C(255, 245, 225), hiAmt: .15, vignette: .3 }],
-  ['diapositiva', 'Diapositiva', 'rojos profundos', 'color', { sat: 1.3, contrast: .35, temp: .15, sh: C(20, 20, 60), shAmt: .15 }],
-  ['invierno', 'Invierno', 'azul nieve', 'color', { temp: -.6, exposure: .1, fade: .2, sat: .7 }],
-  ['cereza', 'Cereza', 'rojos que brillan', 'color', { hi: C(255, 175, 175), hiAmt: .18, sat: 1.25, sh: C(75, 0, 20), shAmt: .3 }],
-  ['pastel', 'Pastel', 'tonos de tiza', 'color', { fade: .6, sat: .7, exposure: .1, contrast: -.2 }],
-  ['vhs', 'VHS deslavado', 'cinta y color corrido', 'retro', { shift: 4, scan: .3, fade: .35, sat: .85, grain: .35, temp: -.1, glow: .25 }],
-  ['camcorder', 'Videocámara 90s', 'la del cumpleaños', 'retro', { shift: 2, scan: .18, sat: 1.15, contrast: .2, temp: .15 }],
-  ['lomo', 'Lomo', 'viñeta y color', 'retro', { vignette: 1, sat: 1.4, contrast: .4 }],
-  ['rollo-viejo', 'Rollo viejo', 'polvo y rayones', 'retro', { fade: .3, sat: .6, temp: .3, dust: 1, grain: .5, vignette: .5 }],
-  ['duo-cereza', 'Duotono cereza', 'vino y rosa', 'retro', { bw: 1, grad: ['#4a0014', '#ffc9c9'], gradAmt: 1 }],
-  ['duo-oceano', 'Duotono océano', 'marino y aqua', 'retro', { bw: 1, grad: ['#002240', '#a6f0e3'], gradAmt: 1 }],
-  ['duo-limon', 'Duotono limón', 'azul y amarillo', 'retro', { bw: 1, grad: ['#1f2a7a', '#fbf07a'], gradAmt: 1 }],
-  ['duo-chicle', 'Duotono chicle', 'morado y rosa', 'retro', { bw: 1, grad: ['#5a1478', '#ffc0d6'], gradAmt: 1 }],
-  ['risografia', 'Risografía', 'tinta rosa y azul', 'retro', { bw: 1, poster: 4, grad: ['#2b3f9e', '#ff4f8b', '#f7efe3'], gradAmt: 1, grain: .3 }],
-  ['termica', 'Cámara térmica', 'calor de fiesta', 'retro', { bw: 1, grad: ['#05003a', '#6a00a8', '#ff3b00', '#ffd400', '#fffbe0'], gradAmt: 1 }],
-  ['nocturna', 'Visión nocturna', 'verde de espía', 'retro', { bw: 1, grad: ['#001200', '#35ff6a'], gradAmt: 1, grain: .6, vignette: .85, scan: .2, glow: .3 }],
+  ['clasico', 'Classic B&W', 'the original booth film', 'bn', { bw: 1, contrast: .22, curve: .25, fade: .06, grain: .22, vignette: .3 }],
+  ['bn-flash', 'B&W Flash', 'bright face, dark room', 'bn', { bw: 1, contrast: .3, flash: .7, vignette: .55, grain: .2 }],
+  ['bn-frio', 'Cool B&W', 'bluish silver', 'bn', { bw: 1, contrast: .2, sh: C(30, 45, 80), shAmt: .4, hi: C(225, 235, 250), hiAmt: .2, grain: .15 }],
+  ['selenio', 'Selenium', 'warm darkroom gray', 'bn', { bw: 1, contrast: .18, sh: C(75, 45, 40), shAmt: .4, hi: C(250, 236, 215), hiAmt: .25, grain: .18 }],
+  ['noir', 'Noir', 'hard contrast', 'bn', { bw: 1, contrast: .55, curve: .45, exposure: -.12, vignette: .65, grain: .3 }],
+  ['plata', 'Soft Silver', 'washed-out grays', 'bn', { bw: 1, contrast: -.12, fade: .55, exposure: .05, grain: .18 }],
+  ['carbon', 'Charcoal', 'deep blacks', 'bn', { bw: 1, contrast: .4, exposure: -.25, curve: .3, grain: .25 }],
+  ['infrarrojo', 'Infrared', 'porcelain skin', 'bn', { bw: 1, bwMix: [.85, .55, -.4], glow: .45, contrast: .25, exposure: .08 }],
+  ['sepia', 'Sepia 1920', 'grandma\'s portrait', 'bn', { bw: 1, grad: ['#2b1a0e', '#9a7148', '#f1dfba'], gradAmt: .95, fade: .2, vignette: .55, grain: .35, dust: .5 }],
+  ['daguerro', 'Daguerreotype', 'silver metal plate', 'bn', { bw: 1, grad: ['#141613', '#7a7a70', '#d9d6c6'], gradAmt: .9, glow: .3, vignette: .85, dust: .7, contrast: .2 }],
+  ['cianotipo', 'Cyanotype', 'blueprint blue', 'bn', { bw: 1, grad: ['#0b2a5c', '#2f6aa3', '#e4eef5'], gradAmt: 1, fade: .1, dust: .3 }],
+  ['periodico', 'Newsprint', 'ink on paper', 'bn', { bw: 1, contrast: .5, poster: 5, grad: ['#232323', '#ece5d4'], gradAmt: .9, grain: .5 }],
+  ['flash-vintage', 'Vintage Flash', 'direct party light', 'flash', { flash: .8, vignette: .6, temp: .2, contrast: .25, sat: .9, grain: .2 }],
+  ['flash-calido', 'Warm Flash', 'peachy glow', 'flash', { temp: .5, flash: .6, hi: C(255, 205, 175), hiAmt: .25, sat: 1.1, vignette: .4 }],
+  ['flash-rosa', 'Rose Flash', 'party blush', 'flash', { hi: C(255, 175, 205), hiAmt: .3, sh: C(90, 20, 60), shAmt: .3, flash: .55, vignette: .4 }],
+  ['cuarto-rojo', 'Red Room', 'darkroom safelight', 'flash', { bw: 1, grad: ['#1a0000', '#a3121c', '#ffb39e'], gradAmt: .9, contrast: .3, vignette: .6 }],
+  ['flash-verde', 'Green Flash', 'electric mint', 'flash', { sh: C(0, 70, 45), shAmt: .45, hi: C(215, 255, 205), hiAmt: .2, flash: .5, contrast: .2, vignette: .4 }],
+  ['cuarto-azul', 'Blue Room', 'cool shadows', 'flash', { temp: -.5, sh: C(10, 30, 90), shAmt: .4, flash: .45, vignette: .5 }],
+  ['disco', 'Disco', 'magenta & cyan', 'flash', { sh: C(90, 0, 130), shAmt: .4, hi: C(140, 255, 255), hiAmt: .22, sat: 1.3, contrast: .3, flash: .4 }],
+  ['paparazzi', 'Paparazzi', 'red carpet flash', 'flash', { exposure: .12, flash: 1, vignette: .9, contrast: .45, sat: .85 }],
+  ['natural', 'Natural', 'no filter', 'color', {}],
+  ['sonado', 'Dreamy Color', 'soft and glowy', 'color', { glow: .5, fade: .3, sat: .9, temp: .15, contrast: -.1 }],
+  ['caramelo', 'Candy Color', 'playful color pop', 'color', { sat: 1.45, contrast: .2, hi: C(255, 232, 240), hiAmt: .12 }],
+  ['hora-dorada', 'Golden Hour', 'amber sunset light', 'color', { temp: .7, hi: C(255, 200, 120), hiAmt: .25, sat: 1.1, glow: .2 }],
+  ['lavanda', 'Lavender Haze', 'soft lilac dream', 'color', { sh: C(80, 60, 125), shAmt: .35, hi: C(236, 222, 255), hiAmt: .2, fade: .35, sat: .8 }],
+  ['durazno', 'Peach', 'peachy skin', 'color', { temp: .35, hi: C(255, 215, 190), hiAmt: .25, fade: .2 }],
+  ['menta', 'Mint', 'fresh green', 'color', { sh: C(20, 75, 60), shAmt: .35, hi: C(232, 255, 242), hiAmt: .15, sat: .85 }],
+  ['pop', 'Pop', 'saturated & punchy', 'color', { sat: 1.8, contrast: .45 }],
+  ['expirada', 'Expired Film', 'weird, wonderful colors', 'color', { sh: C(60, 0, 95), shAmt: .35, hi: C(255, 240, 150), hiAmt: .3, fade: .3, grain: .45, sat: .8, leak: .6 }],
+  ['cruzado', 'Cross Process', 'yellow & cyan', 'color', { sh: C(0, 45, 90), shAmt: .4, hi: C(255, 248, 150), hiAmt: .35, contrast: .3, sat: 1.2 }],
+  ['setentas', '70s Summer', 'warm and faded', 'color', { temp: .5, fade: .4, sat: .8, hi: C(255, 220, 160), hiAmt: .2, grain: .3, leak: .45 }],
+  ['instantanea', 'Instant', 'cyan shadows', 'color', { sh: C(0, 65, 75), shAmt: .35, fade: .3, temp: .1, hi: C(255, 245, 225), hiAmt: .15, vignette: .3 }],
+  ['diapositiva', 'Slide Film', 'deep reds', 'color', { sat: 1.3, contrast: .35, temp: .15, sh: C(20, 20, 60), shAmt: .15 }],
+  ['invierno', 'Winter', 'snowy blue', 'color', { temp: -.6, exposure: .1, fade: .2, sat: .7 }],
+  ['cereza', 'Cherry', 'glowing reds', 'color', { hi: C(255, 175, 175), hiAmt: .18, sat: 1.25, sh: C(75, 0, 20), shAmt: .3 }],
+  ['pastel', 'Pastel', 'chalky tones', 'color', { fade: .6, sat: .7, exposure: .1, contrast: -.2 }],
+  ['vhs', 'Faded VHS', 'washed tape + color bleed', 'retro', { shift: 4, scan: .3, fade: .35, sat: .85, grain: .35, temp: -.1, glow: .25 }],
+  ['camcorder', '90s Camcorder', 'birthday party tape', 'retro', { shift: 2, scan: .18, sat: 1.15, contrast: .2, temp: .15 }],
+  ['lomo', 'Lomo', 'vignette & color', 'retro', { vignette: 1, sat: 1.4, contrast: .4 }],
+  ['rollo-viejo', 'Old Roll', 'dust & scratches', 'retro', { fade: .3, sat: .6, temp: .3, dust: 1, grain: .5, vignette: .5 }],
+  ['duo-cereza', 'Cherry Duotone', 'wine & pink', 'retro', { bw: 1, grad: ['#4a0014', '#ffc9c9'], gradAmt: 1 }],
+  ['duo-oceano', 'Ocean Duotone', 'navy & aqua', 'retro', { bw: 1, grad: ['#002240', '#a6f0e3'], gradAmt: 1 }],
+  ['duo-limon', 'Lemon Duotone', 'blue & yellow', 'retro', { bw: 1, grad: ['#1f2a7a', '#fbf07a'], gradAmt: 1 }],
+  ['duo-chicle', 'Bubblegum Duotone', 'purple & pink', 'retro', { bw: 1, grad: ['#5a1478', '#ffc0d6'], gradAmt: 1 }],
+  ['risografia', 'Risograph', 'pink & blue ink', 'retro', { bw: 1, poster: 4, grad: ['#2b3f9e', '#ff4f8b', '#f7efe3'], gradAmt: 1, grain: .3 }],
+  ['termica', 'Thermal Cam', 'party heat', 'retro', { bw: 1, grad: ['#05003a', '#6a00a8', '#ff3b00', '#ffd400', '#fffbe0'], gradAmt: 1 }],
+  ['nocturna', 'Night Vision', 'spy green', 'retro', { bw: 1, grad: ['#001200', '#35ff6a'], gradAmt: 1, grain: .6, vignette: .85, scan: .2, glow: .3 }],
 ];
 const FILTERS = FILTER_DEFS.map(([id, name, sub, cat, p]) => ({ id, name, sub, cat, p }));
 const FMAP = Object.fromEntries(FILTERS.map(f => [f.id, f]));
-const FCATS = [['all', 'Todos'], ['bn', 'B&N'], ['flash', 'Flash'], ['color', 'Color'], ['retro', 'Retro']];
-const ADJ = [['bright', 'Brillo', -1], ['contrast', 'Contraste', -1], ['sat', 'Saturación', -1], ['warmth', 'Calidez', -1], ['fade', 'Desvanecido', 0], ['grain', 'Grano', 0], ['vignette', 'Viñeta', 0], ['glow', 'Resplandor', 0]];
+const FCATS = [['all', 'All'], ['bn', 'B&W'], ['flash', 'Flash'], ['color', 'Color'], ['retro', 'Retro']];
+const ADJ = [['bright', 'Brightness', -1], ['contrast', 'Contrast', -1], ['sat', 'Saturation', -1], ['warmth', 'Warmth', -1], ['fade', 'Fade', 0], ['grain', 'Grain', 0], ['vignette', 'Vignette', 0], ['glow', 'Glow', 0]];
 const ZERO_ADJ = Object.fromEntries(ADJ.map(a => [a[0], 0]));
 const NEU = { exposure: 0, contrast: 0, curve: 0, fade: 0, temp: 0, tint: 0, sat: 1, bw: 0, shAmt: 0, hiAmt: 0, gradAmt: 0, flash: 0, vignette: 0, grain: 0, glow: 0, leak: 0, dust: 0, shift: 0, scan: 0 };
 const gradCache = new Map();
@@ -710,10 +719,10 @@ function foil(W, H, seed, base) {
   const c = mk(W, H), x = c.getContext('2d'); x.drawImage(hc, 0, 0, W, H); return c;
 }
 const PAPERS = [
-  ['sabana', 'Sábana arrugada'], ['aluminio', 'Papel aluminio'], ['azul', 'Cartulina azul'], ['rosa', 'Papel rosa'],
-  ['kraft', 'Kraft'], ['crema', 'Papel crema'], ['negro', 'Terciopelo negro'], ['rayas', 'Rayas cereza'],
-  ['lunares', 'Lunares'], ['vichy', 'Vichy rosa'], ['mantel', 'Mantel de picnic'], ['libreta', 'Hoja de libreta'],
-  ['corcho', 'Corcho'], ['noche', 'Noche estrellada'],
+  ['sabana', 'Crumpled sheet'], ['aluminio', 'Tin foil'], ['azul', 'Blue cardstock'], ['rosa', 'Pink paper'],
+  ['kraft', 'Kraft paper'], ['crema', 'Cream paper'], ['negro', 'Black velvet'], ['rayas', 'Cherry stripes'],
+  ['lunares', 'Polka dots'], ['vichy', 'Pink gingham'], ['mantel', 'Picnic cloth'], ['libreta', 'Notebook paper'],
+  ['corcho', 'Corkboard'], ['noche', 'Starry night'],
 ];
 let customPaper = null;
 function makePaper(id, W, H, color) {
@@ -881,18 +890,19 @@ const STK = {
   },
 };
 const STICKER_PALETTE = [['star', 'oro'], ['star', 'plata'], ['star', 'rojo'], ['sparkle', 'oro'], ['sparkle', 'blanco'], ['gem', 'rosa'], ['gem', 'rojo'], ['gem', 'cian'], ['rhinestone', 'cristal'], ['rhinestone', 'rosa'], ['bow', 'rosa'], ['bow', 'negro'], ['bow', 'rojo'], ['bow', 'blanco'], ['heart', 'rojo'], ['heart', 'rosa'], ['cherry', 'rojo'], ['daisy', 'blanca'], ['tape', 'rosa'], ['tape', 'menta'], ['tape', 'crema'], ['tape', 'cereza']];
-const STICKER_NAMES = { star: 'estrella', sparkle: 'destello', gem: 'gema', rhinestone: 'diamante', bow: 'moño', heart: 'corazón', cherry: 'cerezas', daisy: 'margarita', tape: 'cinta' };
+const STICKER_NAMES = { star: 'star', sparkle: 'sparkle', gem: 'gem', rhinestone: 'rhinestone', bow: 'bow', heart: 'heart', cherry: 'cherries', daisy: 'daisy', tape: 'washi tape' };
+const VARIANT_NAMES = { oro: 'gold', plata: 'silver', rojo: 'red', rosa: 'pink', blanco: 'white', blanca: 'white', cian: 'cyan', cristal: 'crystal', negro: 'black', menta: 'mint', crema: 'cream', cereza: 'cherry' };
 const FINISHES = {
-  none: { name: 'Tal cual', sub: 'sin adornos' },
-  estrellas: { name: 'Estrellas', sub: 'oro y plata', icon: ['star', 'oro'] },
-  brillos: { name: 'Brillitos', sub: 'destellos', icon: ['sparkle', 'oro'] },
-  pedreria: { name: 'Pedrería', sub: 'gemas y diamantes', icon: ['gem', 'rosa'] },
-  monos: { name: 'Moños', sub: 'coquette', icon: ['bow', 'rosa'] },
-  corazones: { name: 'Corazones', sub: 'rojo y rosa', icon: ['heart', 'rojo'] },
-  cinta: { name: 'Cinta washi', sub: 'esquinas pegadas', icon: ['tape', 'rosa'] },
-  cerezas: { name: 'Cerezas', sub: 'dulces y rojas', icon: ['cherry', 'rojo'] },
-  margaritas: { name: 'Margaritas', sub: 'flores blancas', icon: ['daisy', 'blanca'] },
-  todo: { name: 'Un poco de todo', sub: 'para maximalistas', icon: ['star', 'plata'] },
+  none: { name: 'As is', sub: 'no extras' },
+  estrellas: { name: 'Stars', sub: 'gold & silver', icon: ['star', 'oro'] },
+  brillos: { name: 'Sparkles', sub: 'little twinkles', icon: ['sparkle', 'oro'] },
+  pedreria: { name: 'Bedazzle', sub: 'gems & rhinestones', icon: ['gem', 'rosa'] },
+  monos: { name: 'Bows', sub: 'coquette', icon: ['bow', 'rosa'] },
+  corazones: { name: 'Hearts', sub: 'red & pink', icon: ['heart', 'rojo'] },
+  cinta: { name: 'Washi tape', sub: 'taped corners', icon: ['tape', 'rosa'] },
+  cerezas: { name: 'Cherries', sub: 'sweet & red', icon: ['cherry', 'rojo'] },
+  margaritas: { name: 'Daisies', sub: 'white flowers', icon: ['daisy', 'blanca'] },
+  todo: { name: 'A bit of everything', sub: 'for maximalists', icon: ['star', 'plata'] },
 };
 function stickerIcon(type, v, size) {
   const [w, h] = type === 'tape' ? [280, 84] : [200, 200], k = size / Math.max(w, h);
@@ -904,11 +914,11 @@ function stickerIcon(type, v, size) {
    ========================================================= */
 const BOOTH = {
   poses: { vals: [3, 4, 6], label: v => `${v} poses` },
-  timer: { vals: [3, 5, 10], label: v => `cuenta de ${v} s` },
-  film: { vals: ['bw', 'color'], label: v => v === 'bw' ? 'rollo B&N' : 'rollo a color' },
-  flash: { vals: [true, false], label: v => v ? 'con flash' : 'sin flash' },
-  mirror: { vals: [true, false], label: v => v ? 'modo espejo' : 'sin espejo' },
-  sound: { vals: [true, false], label: v => v ? 'con sonido' : 'en silencio' },
+  timer: { vals: [3, 5, 10], label: v => `${v}s countdown` },
+  film: { vals: ['bw', 'color'], label: v => v === 'bw' ? 'B&W film' : 'color film' },
+  flash: { vals: [true, false], label: v => v ? 'flash on' : 'flash off' },
+  mirror: { vals: [true, false], label: v => v ? 'mirror on' : 'mirror off' },
+  sound: { vals: [true, false], label: v => v ? 'sound on' : 'sound off' },
 };
 const B = {};
 for (const k in BOOTH) { const v = store.get(k, BOOTH[k].vals[k === 'poses' ? 1 : 0]); B[k] = BOOTH[k].vals.includes(v) ? v : BOOTH[k].vals[0]; }
@@ -1215,11 +1225,11 @@ function camMsg(kind) {
   const title = $('#vpTitle'), text = $('#vpText'); $('#vpMsg').hidden = false; $('#tapPlay').hidden = true; $('#vpActions').hidden = kind === 'loading'; $('#retryCam').hidden = inFrame || kind === 'loading' || kind === 'inapp';
   $('#copyLink').hidden = kind !== 'inapp'; $('#vpSample').hidden = kind === 'inapp'; $('#openChrome').hidden = !(kind === 'inapp' && IS_ANDROID);
   if (kind === 'inapp') { $('#openChrome').href = `intent://${location.host}${location.pathname}#Intent;scheme=https;package=com.android.chrome;end`; }
-  if (kind === 'inapp') { title.textContent = `Ábrela en ${IS_ANDROID ? 'Chrome' : 'Safari'}`; text.textContent = `El navegador de ${IN_APP_NAME} no deja usar la cámara. Toca el menú de arriba (los tres puntos) y elige «Abrir en el navegador», o copia el link y pégalo en ${IS_ANDROID ? 'Chrome' : 'Safari'}.`; }
-  else if (kind === 'loading') { title.textContent = 'Encendiendo la cámara…'; text.textContent = 'Si tu navegador pregunta, dale permiso a la cámara.'; }
-  else if (kind === 'denied' && !inFrame) { title.textContent = 'Falta el permiso de cámara'; text.textContent = 'Toca «Intentar de nuevo» y elige Permitir. Si no aparece la pregunta, actívala en los ajustes del navegador (en iPhone: aA › Ajustes del sitio web › Cámara).'; }
-  else if (inFrame) { title.textContent = 'Aquí no hay cámara'; text.innerHTML = 'Para tomarte fotos, ábrela en <a href="https://gabymerce97-maker.github.io/vintage-to-go/" target="_blank" rel="noopener" style="color:inherit">gabymerce97-maker.github.io/vintage-to-go</a>. Aquí puedes subir de 1 a 6 fotos o usar las de ejemplo.'; }
-  else { title.textContent = 'No encontramos una cámara'; text.textContent = 'Revisa que ninguna otra app la esté usando. También puedes subir de 1 a 6 fotos.'; }
+  if (kind === 'inapp') { title.textContent = `Open it in ${IS_ANDROID ? 'Chrome' : 'Safari'}`; text.textContent = `${IN_APP_NAME ? IN_APP_NAME + '’s' : 'This app’s'} browser can’t use the camera. Tap the menu at the top (the three dots) and choose “Open in browser”, or copy the link and paste it into ${IS_ANDROID ? 'Chrome' : 'Safari'}.`; }
+  else if (kind === 'loading') { title.textContent = 'Starting the camera…'; text.textContent = 'If your browser asks, allow camera access.'; }
+  else if (kind === 'denied' && !inFrame) { title.textContent = 'Camera access needed'; text.textContent = 'Tap “Try again” and choose Allow. If nothing pops up, turn the camera on in your browser settings (on iPhone: aA › Website Settings › Camera).'; }
+  else if (inFrame) { title.textContent = 'No camera here'; text.innerHTML = 'To take photos, open it at <a href="https://gabymerce97-maker.github.io/vintage-to-go/" target="_blank" rel="noopener" style="color:inherit">gabymerce97-maker.github.io/vintage-to-go</a>. Here you can upload 1 to 6 photos or try the samples.'; }
+  else { title.textContent = 'We couldn’t find a camera'; text.textContent = 'Make sure no other app is using it. You can also upload 1 to 6 photos.'; }
 }
 function playVideo() {
   let p; try { p = video.play(); } catch (e) { p = null; }
@@ -1272,10 +1282,33 @@ function thumbURL(src) {
   if (sr > 4 / 3) { sw = sh * 4 / 3; sx = (src.width - sw) / 2; } else { sh = sw * 3 / 4; sy = (src.height - sh) * .3; }
   x.drawImage(src, sx, sy, sw, sh, 0, 0, 96, 72); return c.toDataURL('image/jpeg', .8);
 }
-const WORDS = { 3: 'tres', 4: 'cuatro', 6: 'seis' };
+const WORDS = { 3: 'three', 4: 'four', 6: 'six' };
+const PHRASES = ['you look fab', 'give me that', 'what a great day to be smiling', 'serving looks', 'main character energy', 'the camera loves you', 'that’s the one', 'iconic. truly.', 'frame-worthy', 'obsessed with these', 'hot off the press', 'one for the fridge', 'say cheese!', 'absolutely stunning', 'pure vintage magic'];
+const CHEERS = ['you look fab!', 'give me that!', 'gorgeous!', 'love it!', 'one more!', 'serve!', 'stunning!', 'that’s the one!', 'iconic!', 'work it!'];
+const shuffled = a => { const r = a.slice(); for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [r[i], r[j]] = [r[j], r[i]]; } return r; };
+let cheerT = 0, cheerBag = [];
+function cheer() {
+  const el = $('#cheer'); if (!cheerBag.length) cheerBag = shuffled(CHEERS);
+  el.textContent = cheerBag.pop(); el.hidden = false; el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
+  clearTimeout(cheerT); cheerT = setTimeout(() => { el.hidden = true; }, 1100);
+}
+let plateT = 0;
+function startPlate() {
+  clearTimeout(plateT);
+  const el = $('#plateText'), order = shuffled(PHRASES), reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; let i = 0;
+  const next = () => {
+    if ($('#scr-develop').hidden) return;
+    const t = order[i++ % order.length];
+    if (reduce) { el.textContent = t; plateT = setTimeout(next, 3200); return; }
+    let k = 0;
+    const type = () => { if ($('#scr-develop').hidden) return; el.textContent = t.slice(0, ++k); plateT = setTimeout(k < t.length ? type : next, k < t.length ? 55 : 2600); };
+    type();
+  };
+  next();
+}
 function renderBoothOpts() {
   $('#boothOpts').innerHTML = Object.keys(BOOTH).map(k => `<button class="pill" type="button" data-act="boothopt" data-k="${k}">${BOOTH[k].label(B[k])}</button>`).join('');
-  $('#boothHint').textContent = `${WORDS[B.poses]} poses, una tira`;
+  $('#boothHint').textContent = `${WORDS[B.poses]} poses, one strip`;
   video.classList.toggle('mirror', !!B.mirror);
   renderSlots([]);
 }
@@ -1288,9 +1321,9 @@ function renderSlots(shots) {
   }
 }
 function setShooting(on) {
-  shooting = on; $('#starBtn').classList.toggle('busy', on); $('#starLabel').textContent = on ? '¡posa!' : 'toca para empezar';
+  shooting = on; $('#starBtn').classList.toggle('busy', on); $('#starLabel').textContent = on ? 'strike a pose!' : 'tap to start';
   $('#cancelShoot').hidden = !on; document.querySelectorAll('#boothOpts .pill').forEach(b => { b.disabled = on; });
-  if (!on) { $('#countdown').hidden = true; $('#poseTag').hidden = true; }
+  if (!on) { $('#countdown').hidden = true; $('#poseTag').hidden = true; $('#cheer').hidden = true; }
 }
 async function shoot() {
   if (shooting) return;
@@ -1300,18 +1333,18 @@ async function shoot() {
   const token = ++shotToken, n = B.poses, shots = [], cd = $('#countdown'), tag = $('#poseTag'), fl = $('#flash');
   setShooting(true); renderSlots(shots);
   for (let i = 0; i < n; i++) {
-    tag.textContent = `pose ${i + 1} de ${n}`; tag.hidden = false;
+    tag.textContent = `pose ${i + 1} of ${n}`; tag.hidden = false;
     for (let t = B.timer; t > 0; t--) {
       if (token !== shotToken) return;
       cd.innerHTML = `<span>${t}</span>`; cd.hidden = false; beep(t === 1 ? 1175 : 880); await wait(1000);
     }
     cd.hidden = true; if (token !== shotToken) return;
     if (B.flash) { fl.style.transition = 'none'; fl.style.opacity = '1'; await wait(170); }
-    if (!video.videoWidth) { toast('La cámara dejó de responder. Intenta de nuevo.'); setShooting(false); return; }
+    if (!video.videoWidth) { toast('The camera stopped responding. Try again.'); setShooting(false); return; }
     shots.push(fromSource(video, video.videoWidth, video.videoHeight, B.mirror)); shutter();
     if (B.flash) { void fl.offsetWidth; fl.style.transition = ''; fl.style.opacity = '0'; }
     else { const vp = $('#vp'); vp.classList.remove('blink'); void vp.offsetWidth; vp.classList.add('blink'); }
-    renderSlots(shots); await wait(700);
+    cheer(); renderSlots(shots); await wait(900);
   }
   if (token !== shotToken) return;
   setShooting(false); startDevelop(shots);
@@ -1323,8 +1356,8 @@ async function handleFiles(list, max = 6) {
   for (const f of files.slice(0, max)) {
     try { const img = await loadImage(f); shots.push(fromSource(img, img.naturalWidth, img.naturalHeight, false)); } catch (e) { /* se ignora */ }
   }
-  if (!shots.length) { toast('No pudimos leer esas imágenes. Prueba con JPG o PNG.'); return; }
-  if (files.length > max) toast(`Usamos las primeras ${max} fotos.`);
+  if (!shots.length) { toast('We couldn’t read those images. Try JPG or PNG.'); return; }
+  if (files.length > max) toast(`We used the first ${max} photos.`);
   startDevelop(shots);
 }
 function loadImage(file) {
@@ -1436,8 +1469,8 @@ const dlP = (window.claude && typeof window.claude.use === 'function') ? window.
 async function saveBlob(blob, filename) {
   const dl = await dlP;
   if (dl) {
-    try { await dl.save({ filename, data: blob }); toast('Imagen guardada'); return; }
-    catch (err) { if (err && err.code === 'declined') { toast('Descarga cancelada'); return; } if (err && err.code === 'rate_limited') { toast('Espera un momento y vuelve a intentar.'); return; } }
+    try { await dl.save({ filename, data: blob }); toast('Image saved'); return; }
+    catch (err) { if (err && err.code === 'declined') { toast('Download canceled'); return; } if (err && err.code === 'rate_limited') { toast('Wait a moment and try again.'); return; } }
   }
   const url = URL.createObjectURL(blob);
   if (!inFrame && isPhone()) {
@@ -1447,13 +1480,13 @@ async function saveBlob(blob, filename) {
     } catch (err) {
       if (err && err.name === 'AbortError') { URL.revokeObjectURL(url); return; }
     }
-    openLightbox(url, 'Mantén presionada la foto y elige «Guardar en Fotos».'); return;
+    openLightbox(url, 'Press and hold the photo, then choose “Save to Photos”.'); return;
   }
   if (!inFrame) {
     const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click();
-    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 4000); toast('Imagen descargada'); return;
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 4000); toast('Image downloaded'); return;
   }
-  openLightbox(url, 'Mantén presionada la imagen (o haz clic derecho) para guardarla.');
+  openLightbox(url, 'Press and hold the image (or right-click it) to save it.');
 }
 function isPhone() { return matchMedia('(pointer: coarse)').matches && Math.min(screen.width, screen.height) < 820; }
 function canvasBlob(c) { return new Promise(r => c.toBlob(b => r(b), 'image/png')); }
@@ -1470,6 +1503,7 @@ function show(name) {
   for (const id of ['booth', 'develop', 'decor']) $('#scr-' + id).hidden = id !== name;
   window.scrollTo(0, 0);
   if (name === 'booth') startCamera(); else if (stream) stopCamera();
+  if (name === 'develop') startPlate(); else clearTimeout(plateT);
 }
 async function enterDecor() {
   show('decor');
@@ -1485,15 +1519,15 @@ function buildPanel() {
   $('#optFormat').innerHTML = Object.entries(FORMATS).map(([k, f]) => opt('format', k, f.name, f.sub, true)).join('');
   $('#optLayout').innerHTML = Object.entries(LAYOUTS).map(([k, f]) => opt('layout', k, f.name, f.sub)).join('');
   $('#optFrame').innerHTML = Object.entries(FRAMES).map(([k, f]) => opt('frame', k, f.name, f.sub)).join('');
-  $('#fCount').textContent = `${FILTERS.length} filtros`;
+  $('#fCount').textContent = `${FILTERS.length} filters`;
   $('#fCats').innerHTML = FCATS.map(([k, n]) => `<button class="chip" type="button" data-act="fcat" data-v="${k}" aria-pressed="false">${n}</button>`).join('');
   $('#fGrid').innerHTML = FILTERS.map(f => `<button class="ftile" type="button" data-act="filter" data-v="${f.id}" data-cat="${f.cat}" aria-pressed="false"><span class="fthumb" data-thumb="${f.id}"></span><span class="txt"><b>${f.name}</b><small>${f.sub}</small></span></button>`).join('');
   $('#adjRows').innerHTML = ADJ.map(([k, n, min]) => `<div class="range-row"><label for="adj-${k}">${n}</label><input type="range" id="adj-${k}" data-adj="${k}" min="${min * 100}" max="100" step="1"><output id="o-${k}" for="adj-${k}"></output></div>`).join('');
   const pap = $('#papers'); pap.innerHTML = '';
   for (const [id, name] of PAPERS) { const b = document.createElement('button'); b.className = 'sw'; b.type = 'button'; b.dataset.act = 'paper'; b.dataset.v = id; b.title = name; b.setAttribute('aria-label', name); b.setAttribute('aria-pressed', 'false'); b.appendChild(makePaper(id, 92, 92)); pap.appendChild(b); }
-  const colorSw = document.createElement('label'); colorSw.className = 'sw'; colorSw.title = 'Color a tu gusto'; colorSw.dataset.v = 'color'; colorSw.setAttribute('aria-pressed', 'false');
-  colorSw.innerHTML = '<span class="dot" id="colorDot"></span><input type="color" id="paperColor" aria-label="Elegir color de papel">'; pap.appendChild(colorSw);
-  const up = document.createElement('button'); up.className = 'sw'; up.type = 'button'; up.dataset.act = 'paper-upload'; up.dataset.v = 'custom'; up.title = 'Usar una foto de fondo'; up.setAttribute('aria-label', 'Usar una foto de fondo'); up.setAttribute('aria-pressed', 'false'); up.textContent = '+'; pap.appendChild(up);
+  const colorSw = document.createElement('label'); colorSw.className = 'sw'; colorSw.title = 'Any color'; colorSw.dataset.v = 'color'; colorSw.setAttribute('aria-pressed', 'false');
+  colorSw.innerHTML = '<span class="dot" id="colorDot"></span><input type="color" id="paperColor" aria-label="Pick a paper color">'; pap.appendChild(colorSw);
+  const up = document.createElement('button'); up.className = 'sw'; up.type = 'button'; up.dataset.act = 'paper-upload'; up.dataset.v = 'custom'; up.title = 'Use a photo as background'; up.setAttribute('aria-label', 'Use a photo as background'); up.setAttribute('aria-pressed', 'false'); up.textContent = '+'; pap.appendChild(up);
   const fin = $('#optFinish'); fin.innerHTML = '';
   for (const [k, f] of Object.entries(FINISHES)) {
     const b = document.createElement('button'); b.className = 'opt'; b.type = 'button'; b.dataset.act = 'finish'; b.dataset.v = k; b.setAttribute('aria-pressed', 'false');
@@ -1501,7 +1535,7 @@ function buildPanel() {
     const t = document.createElement('span'); t.innerHTML = `<b>${f.name}</b><small>${f.sub}</small>`; b.appendChild(t); fin.appendChild(b);
   }
   const st = $('#stickers'); st.innerHTML = '';
-  for (const [t, v] of STICKER_PALETTE) { const b = document.createElement('button'); b.className = 'stk'; b.type = 'button'; b.dataset.act = 'sticker'; b.dataset.t = t; b.dataset.v = v; b.title = `${STICKER_NAMES[t]} ${v}`; b.setAttribute('aria-label', `Agregar ${STICKER_NAMES[t]} ${v}`); b.appendChild(stickerIcon(t, v, 40)); st.appendChild(b); }
+  for (const [t, v] of STICKER_PALETTE) { const b = document.createElement('button'); b.className = 'stk'; b.type = 'button'; b.dataset.act = 'sticker'; b.dataset.t = t; b.dataset.v = v; b.title = `${VARIANT_NAMES[v] || v} ${STICKER_NAMES[t]}`; b.setAttribute('aria-label', `Add ${VARIANT_NAMES[v] || v} ${STICKER_NAMES[t]}`); b.appendChild(stickerIcon(t, v, 40)); st.appendChild(b); }
   const fchips = act => Object.entries(FONTS).map(([k, f]) => `<button class="chip" type="button" data-act="${act}" data-v="${k}" aria-pressed="false" style="font-family:${f.css.replace(/"/g, "'")},${f.fb.replace(/"/g, "'")};${f.st ? 'font-style:' + f.st + ';' : ''}${f.w ? 'font-weight:' + f.w + ';' : ''}${f.sc > 1.3 ? 'font-size:17px;padding-block:3px;' : ''}">${f.label}</button>`).join('');
   $('#capFonts').innerHTML = fchips('capfont'); $('#txtFonts').innerHTML = fchips('txtfont');
   $('#txtColors').innerHTML = TEXT_COLORS.map(([c, n]) => `<button class="col" type="button" data-act="txtcolor" data-v="${c}" aria-label="${n}" title="${n}" aria-pressed="false" style="background:${c}"></button>`).join('');
@@ -1532,7 +1566,7 @@ function syncUI() {
   for (const [k] of ADJ) { const v = Math.round(S.adj[k] * 100); $('#adj-' + k).value = v; $('#o-' + k).textContent = v > 0 && k !== 'fade' && k !== 'grain' && k !== 'vignette' && k !== 'glow' ? '+' + v : v; }
   press('#papers .sw', b => b.dataset.v === S.paper);
   $('#colorDot').style.background = S.paperColor; $('#paperColor').value = S.paperColor;
-  const pn = PAPERS.find(p => p[0] === S.paper); $('#paperName').textContent = pn ? pn[1] : S.paper === 'color' ? 'Color a tu gusto' : 'Tu foto de fondo';
+  const pn = PAPERS.find(p => p[0] === S.paper); $('#paperName').textContent = pn ? pn[1] : S.paper === 'color' ? 'Any color' : 'Your background photo';
   press('[data-act="finish"]', b => b.dataset.v === S.finish);
   if (document.activeElement !== $('#capIn')) $('#capIn').value = S.caption;
   press('[data-act="capfont"]', b => b.dataset.v === S.capFont);
@@ -1545,7 +1579,7 @@ function syncUI() {
 function syncSel() {
   const it = selItem(); $('#selTools').hidden = !it; $('#stageHint').hidden = !!it;
   if (!it) return;
-  $('#selLabel').textContent = it.kind === 'strip' ? 'tira' : it.kind === 'print' ? `foto ${it.pi + 1}` : it.kind === 'grid' ? 'cuadrícula' : it.kind === 'text' ? 'texto' : STICKER_NAMES[it.type];
+  $('#selLabel').textContent = it.kind === 'strip' ? 'strip' : it.kind === 'print' ? `photo ${it.pi + 1}` : it.kind === 'grid' ? 'grid' : it.kind === 'text' ? 'text' : STICKER_NAMES[it.type];
   if (it.kind === 'text') { ui.txtFont = it.font; ui.txtColor = it.color; if (document.activeElement !== $('#txtIn')) $('#txtIn').value = it.text; press('[data-act="txtfont"]', b => b.dataset.v === ui.txtFont); press('[data-act="txtcolor"]', b => b.dataset.v === ui.txtColor); }
 }
 function setFormat(f) {
@@ -1560,7 +1594,7 @@ function addSticker(type, v) {
   S.items.push(it); S.sel = it.id; syncSel(); requestRender();
 }
 function addText() {
-  const text = $('#txtIn').value.trim() || 'escribe aquí', [W, H] = sceneSize();
+  const text = $('#txtIn').value.trim() || 'write here', [W, H] = sceneSize();
   pushHistory(); const it = { id: ++itemSeq, kind: 'text', text, font: ui.txtFont, color: ui.txtColor, x: W / 2, y: H * .88, r: -.04, s: 1 };
   const d = itemDims(it); it.s = Math.min(Math.min(W, H) * .1 / d.h, W * .8 / d.w); S.items.push(it); S.sel = it.id; syncSel(); requestRender();
 }
@@ -1574,18 +1608,18 @@ const ACT = {
   'tap-play'() { playVideo(); },
   async 'copy-link'(b) {
     const url = location.href.split('#')[0];
-    try { await navigator.clipboard.writeText(url); b.textContent = '¡Copiado!'; setTimeout(() => { b.textContent = 'Copiar link'; }, 2000); }
-    catch (e) { $('#vpText').textContent = url; toast('Mantén presionado el link para copiarlo.'); }
+    try { await navigator.clipboard.writeText(url); b.textContent = 'Copied!'; setTimeout(() => { b.textContent = 'Copy link'; }, 2000); }
+    catch (e) { $('#vpText').textContent = url; toast('Press and hold the link to copy it.'); }
   },
   sample() { startDevelop(samplePhotos(B.poses)); },
   'cancel-shoot'() { shotToken++; setShooting(false); renderSlots([]); },
   boothopt(b) { const k = b.dataset.k, vals = BOOTH[k].vals; B[k] = vals[(vals.indexOf(B[k]) + 1) % vals.length]; store.set(k, B[k]); renderBoothOpts(); },
   decorate() { enterDecor(); },
-  async 'download-strip'(b) { b.disabled = true; try { draft = false; syncCaches(); const blob = await canvasBlob(itemCanvas({ kind: 'strip' })); await saveBlob(blob, `vintage-to-go-tira-${fileStamp()}.png`); } finally { b.disabled = false; } },
+  async 'download-strip'(b) { b.disabled = true; try { draft = false; syncCaches(); const blob = await canvasBlob(itemCanvas({ kind: 'strip' })); await saveBlob(blob, `vintage-to-go-strip-${fileStamp()}.png`); } finally { b.disabled = false; } },
   retake() { photos = []; S = null; show('booth'); renderSlots([]); },
   'back-develop'() { show('develop'); refreshDevelopStrip(); },
   undo() { undo(); },
-  async save(b) { b.disabled = true; const t = b.textContent; b.textContent = 'Guardando…'; try { const blob = await exportScene(); await saveBlob(blob, `vintage-to-go-${fileStamp()}.png`); } catch (e) { toast('No se pudo guardar. Intenta otra vez.'); } finally { b.disabled = false; b.textContent = t; requestRender(); } },
+  async save(b) { b.disabled = true; const t = b.textContent; b.textContent = 'Saving…'; try { const blob = await exportScene(); await saveBlob(blob, `vintage-to-go-${fileStamp()}.png`); } catch (e) { toast('Couldn’t save. Try again.'); } finally { b.disabled = false; b.textContent = t; requestRender(); } },
   async share(b) { b.disabled = true; try { const blob = await exportScene(); await navigator.share({ files: [new File([blob], `vintage-to-go-${fileStamp()}.png`, { type: 'image/png' })], title: 'Vintage to Go' }); } catch (e) { /* cancelado */ } finally { b.disabled = false; } },
   format(b) { setFormat(b.dataset.v); },
   layout(b) { if (S.layout === b.dataset.v && S.format !== 'strip') return; pushHistory(); S.layout = b.dataset.v; doLayout(); syncUI(); requestRender(); },
@@ -1601,7 +1635,7 @@ const ACT = {
   paper(b) { if (S.paper === b.dataset.v) return; pushHistory(); S.paper = b.dataset.v; syncUI(); requestRender(); },
   'paper-upload'() { if (customPaper && S.paper !== 'custom') { pushHistory(); S.paper = 'custom'; syncUI(); requestRender(); return; } $('#paperIn').click(); },
   finish(b) { pushHistory(); S.finish = b.dataset.v; replaceAutoStickers(); syncUI(); requestRender(); },
-  'reshuffle-stickers'() { if (S.finish === 'none') { toast('Primero elige un adorno de la lista.'); return; } pushHistory(); S.fseed = 1 + Math.floor(Math.random() * 1e6); replaceAutoStickers(); requestRender(); },
+  'reshuffle-stickers'() { if (S.finish === 'none') { toast('Pick an option from the list first.'); return; } pushHistory(); S.fseed = 1 + Math.floor(Math.random() * 1e6); replaceAutoStickers(); requestRender(); },
   'clear-stickers'() { pushHistory(); S.items = S.items.filter(i => i.kind !== 'sticker'); S.finish = 'none'; if (!selItem()) S.sel = null; syncUI(); requestRender(); },
   sticker(b) { addSticker(b.dataset.t, b.dataset.v); },
   capfont(b) { pushHistory(); S.capFont = b.dataset.v; store.set('capFont', S.capFont); syncUI(); requestRender(); },
@@ -1627,7 +1661,7 @@ $('#lb').addEventListener('click', e => { if (e.target === $('#lb')) $('#lb').hi
 $('#paperIn').addEventListener('change', async e => {
   const f = e.target.files[0]; e.target.value = ''; if (!f) return;
   try { const img = await loadImage(f); const k = Math.min(1, 2400 / Math.max(img.naturalWidth, img.naturalHeight)), c = mk(img.naturalWidth * k, img.naturalHeight * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); customPaper = c; pushHistory(); S.paper = 'custom'; paperCache.key = ''; syncUI(); requestRender(); }
-  catch (err) { toast('No pudimos abrir esa imagen.'); }
+  catch (err) { toast('We couldn’t open that image.'); }
 });
 document.addEventListener('input', e => {
   const t = e.target; if (!S) return;
